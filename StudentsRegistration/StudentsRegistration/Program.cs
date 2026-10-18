@@ -9,62 +9,77 @@ namespace StudentsRegistration
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static int nextId = 1;
+
+        static void Main()
+        {
+            List<Student> students = new List<Student>();
+            while (true)
+            {
+                Student student = null;
+
+                Read("Име: ", s => student = new Student(nextId, s));
+                nextId++;
+
+                Read("Възраст: ", s => student.Age = int.Parse(s));
+                Read("Клас: ", s => student.Grade = int.Parse(s));
+                Read("Среден успех: ", s => student.AverageScore = double.Parse(s));
+                Read("Такса: ", s => student.Fee = decimal.Parse(s));
+                Read("Стипендия (да/не): ", s => student.HasScholarship = YesOrNo(s));
+                Read("Паралелка: ", s => student.ClassLetter = char.Parse(s));
+                Read("Дата на раждане (дд.мм.гггг): ", s => student.BirthDate = DateTime.ParseExact(s, "dd.MM.yyyy", null));
+
+                students.Add(student);
+
+                Console.Write("Друг ученик? (да/не): ");
+                if (Console.ReadLine().Trim().ToLower() != "да") break;
+            }
+
+            foreach (Student student in students)
+            {
+                Console.WriteLine();
+                Console.WriteLine("=== ДАННИ ЗА УЧЕНИК ===");
+                Console.WriteLine();
+                Console.WriteLine("Id: " + student.Id);
+                Console.WriteLine("Име: " + student.Name);
+                Console.WriteLine("Възраст: " + student.Age);
+                Console.WriteLine("Клас: " + student.Grade);
+                Console.WriteLine("Среден успех: " + student.AverageScore.ToString("F2"));
+                Console.WriteLine("Такса: " + student.Fee.ToString("F2") + " лв.");
+                Console.WriteLine("Стипендия: " + (student.HasScholarship ? "Да" : "Не"));
+                Console.WriteLine("Паралелка: " + student.ClassLetter);
+                Console.WriteLine("Дата на раждане: " + student.BirthDate.ToString("dd.MM.yyyy"));
+            }
+        }
+
+
+        static void Read(string prompt, Action<string> apply)
         {
             while (true)
             {
-                Console.Write("Възраст: ");
-                if (int.TryParse(Console.ReadLine(), out int age))
+                Console.Write(prompt);
+                try
                 {
-                    if (age > 19) Console.WriteLine("Невалидна възраст. Опитайте отново.");
-                    else break;
+                    apply(Console.ReadLine());
+                    return;
                 }
-                else Console.WriteLine("Невалидна възраст. Опитайте отново.");
-            }
-            
-            Console.Write("Клас на ученика: ");
-            if (byte.TryParse(Console.ReadLine(), out byte Grade))
-            {
-                if (Grade > 12) Console.WriteLine("Невалиден клас.");
-                else Console.WriteLine($"Клас на ученика: {Grade}");
-            }
-            else Console.WriteLine("Невалиден клас.");
-            
-            Console.Write("Среден успех: ");
-            if (double.TryParse(Console.ReadLine(), out double AvgGrade))
-            {
-                if (AvgGrade > 6) Console.WriteLine("Невалидна оценка.");
-                else Console.WriteLine($"Среден успех: {AvgGrade}");
-            }
-            else Console.WriteLine("Невалидна оценка.");
-            
-            Console.Write("Такса: ");
-            if (decimal.TryParse(Console.ReadLine(), out decimal Tax))
-            {
-                Console.WriteLine($"Такса: {Tax}");
-            }
-            else Console.WriteLine("Невалидна такса.");
-            
-            Console.Write("Получава ли стипендия: ");
-            if (bool.TryParse(Console.ReadLine(), out bool hasScholarship))
-            {
-                Console.WriteLine($"{hasScholarship}");
-            }
-            Console.Write("Въведете буква на паралелката: ");
-            if (char.TryParse(Console.ReadLine(), out char Class))
-            {
-                Console.WriteLine($"Буква на паралелката: {Class}");
-            }
-            else Console.WriteLine("Невалиден клас.");
-            while (true)
-            {
-                Console.Write("Въведете дата на раждане: ");
-                if (DateTime.TryParse(Console.ReadLine(), out DateTime BirthDay))
+                catch (Exception ex) when (ex is FormatException || ex is OverflowException)
                 {
-                    break;
+                    Console.WriteLine("Невалиден формат. Опитайте отново.");
                 }
-                else Console.WriteLine("Невалидна дата. Опитайте отново.");
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine("Грешка: " + ex.Message);
+                }
             }
+        }
+
+        static bool YesOrNo(string s)
+        {
+            s = s.Trim().ToLower();
+            if (s == "да") return true;
+            if (s == "не") return false;
+            throw new FormatException();
         }
     }
 }
