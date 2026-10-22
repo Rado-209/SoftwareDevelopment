@@ -9,7 +9,7 @@ namespace StudentsRegistration
 {
     internal class Program
     {
-        static int nextId = 1;
+        static int nexId = 1;
 
         static void Main()
         {
@@ -18,8 +18,8 @@ namespace StudentsRegistration
             {
                 Student student = null;
 
-                Read("Име: ", s => student = new Student(nextId, s));
-                nextId++;
+                Read("Име: ", s => student = new Student(nexId, s));
+                nexId++;
 
                 Read("Възраст: ", s => student.Age = int.Parse(s));
                 Read("Клас: ", s => student.Grade = int.Parse(s));
