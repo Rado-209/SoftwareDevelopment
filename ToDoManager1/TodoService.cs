@@ -11,13 +11,14 @@ namespace ToDoManager1
         private readonly List<TodoItem> todos = new List<TodoItem>();
         private int nextId = 1;
 
+        private TodoStorage storage;
         public List<TodoItem> GetAll()
         {
             return todos;
         }
         public TodoItem FindById(int id)
         {
-            foreach (TodoItem todoItem in todos)
+            foreach (TodoItem todoItem in storage.Todos)
             {
                 if (todoItem.Id == id)
                 {
@@ -28,9 +29,9 @@ namespace ToDoManager1
         }
         public void Add(string title, string description, DateTime dueDate)
         {
-            TodoItem todoItem = new TodoItem(nextId, title, description, dueDate);
-            todos.Add(todoItem);
-            nextId++;
+            TodoItem todoItem = new TodoItem(storage.NextId, title, description, dueDate);
+            storage.Todos.Add(todoItem);
+            storage.NextId++;
         }
         public void Completed(int id)
         {
@@ -41,6 +42,14 @@ namespace ToDoManager1
                 throw new ArgumentException("Няма задача с такова ID.");
             }
             todo.Completed();
+        }
+        public void Deleted(int id)
+        {
+            TodoItem todo = FindById(id);
+
+            if (todo == null) throw new ArgumentException("Няма задача с такова ID.");
+
+            todos.Remove(todo);
         }
     }
 }
